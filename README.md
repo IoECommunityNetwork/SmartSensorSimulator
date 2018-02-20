@@ -13,6 +13,21 @@ Pre-requisites:
     * Uses a random number generator for fill level and temperature
     * Uses instantaneous time for timestamp
 
+For example:
+```
+{
+  "sesnorID": 99,
+  "binID": 666,
+  "binName": "Random Smart Sensor Simulator Module",
+  "binCategory": "Smart Sensor Simulator ",
+  "latitude": -33.869033,
+  "longitude": 151.208895,
+  "fillLevel": 56,
+  "temperature": 33,
+  "timestampdata": 1519097620
+}
+```
+
 ## What's Missing
 
 * In addition to a random number generator, add other signal generators
@@ -20,6 +35,6 @@ Pre-requisites:
     1. Read data from file captured from the actual SmartSensorAPI data, and
     1. Invoke the actual SmartSensorAPI
         * Would use module twin to pass configuration to the module at runtime
-* Generalise the module into a class library using IoC/DI to create a Simulator Module framework
-    * Could use module twin to decalre configuration for DI
-    * Could consturct a basic simulated device with dimulated sensors without any coding, just configuration
+* Generalise the module into a class library using IoC/DI to create a Simulator Module plugin framework
+    * Could use module twin to declare configuration for DI
+    * Could consturct a basic simulated device with simulated sensors without any coding, just configuration
