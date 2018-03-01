@@ -106,20 +106,26 @@ namespace SmartSensorSimulator
             // React to stream of SensorData readings from the API or file
             return
                 source
-                    .Select(x => 
-                            new BinSensorReading
-                            {
-                                sesnorID = 98, // TODO refactor constant sendorDetail to fetch from actual sample values
-                                binID = 667,
-                                binName = "Random Smart Sensor Simulator Module",
-                                binCategory = "Smart Sensor Simulator ",
-                                latitude = -33.869033,
-                                longitude = 151.208895,
-                                fillLevel = CalculateFillLevel(data.message.depthWhenEmpty_cm,  data.message.distanceSensorToFillLine_cm, x.ultrasound), // TODO fillLevel can sometimes com out as -ve due to ultrsound reading, maybe filter?
-                                temperature = x.temperatureValue,
-                                timestampdata = x.timestampdata
-                            })
-                    .Do(x => Console.WriteLine(String.Format("FillLevel={0}", x.fillLevel))) // DEBUG
+                    .Select(_ => 
+                                new
+                                {
+                                    detail = GetSensorDetail(_.sensorallocatedID).message,
+                                    data = _
+                                })
+                    .Select(_ => 
+                                new BinSensorReading
+                                {
+                                    sesnorID = _.detail.sensorsID, // 98,
+                                    binID = _.detail.currentPinAllocated.projectpinID, // 667,
+                                    binName = _.detail.currentPinAllocated.name, // "Random Smart Sensor Simulator Module",
+                                    binCategory = _.detail.currentPinAllocated.pinType.pinTypeName, // "Smart Sensor Simulator ",
+                                    latitude = _.detail.currentPinAllocated.latitude, // -33.869033,
+                                    longitude = _.detail.currentPinAllocated.longitude, //151.208895,
+                                    fillLevel = CalculateFillLevel(_.detail.currentPinAllocated.pinType.depthWhenEmpty_cm,  _.detail.currentPinAllocated.pinType.distanceSensorToFillLine_cm, _.data.ultrasound),
+                                    temperature = _.data.temperatureValue,
+                                    timestampdata = _.data.timestampdata
+                                })
+                    .Do(_ => Console.WriteLine(JsonConvert.SerializeObject(_))) // DEBUG
                     .Select(JsonConvert.SerializeObject)
                     .Select(messageString => Encoding.UTF8.GetBytes(messageString))
                     .Select(messageBytes => new Message(messageBytes))
@@ -135,6 +141,14 @@ namespace SmartSensorSimulator
                                 Console.WriteLine(ex.ToString());
                                 Console.WriteLine();
                             });
+        }
+
+        private static SensorDetail GetSensorDetail(int sensorId)
+        {
+            using (StreamReader reader = new StreamReader(String.Format("data/sensorDetail.{0}.json", sensorId)))
+            {
+                return JsonConvert.DeserializeObject<SensorDetail>(reader.ReadToEnd());
+            }
         }
 
         private static SensorData GetSensorData(int sensorId)

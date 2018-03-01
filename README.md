@@ -34,7 +34,7 @@ For example:
 * In addition to signal generators, let's call this synthetic mode, include 2 more modes:
     1. ~~Read data from file captured from the actual SmartSensorAPI data, and~~
         1. Currently just reading sample sensorData but dummy values for sensorDetail
-            1. Need to read sample sensorDetail
+            1. ~~Need to read sample sensorDetail~~
             1. Need to filter our -ve fillLevel values stemming from non-sensical ultrasound values
         1. Refactor the following configuration values into either a configuration file or module/device twin
             1. sensorId
