@@ -32,7 +32,13 @@ For example:
 
 * In addition to a random number generator, add other signal generators
 * In addition to signal generators, let's call this synthetic mode, include 2 more modes:
-    1. Read data from file captured from the actual SmartSensorAPI data, and
+    1. ~~Read data from file captured from the actual SmartSensorAPI data, and~~
+        1. Currently just reading sample sensorData but dummy values for sensorDetail
+            1. Need to read sample sensorDetail
+            1. Need to filter our -ve fillLevel values stemming from non-sensical ultrasound values
+        1. Refactor the following configuration values into either a configuration file or module/device twin
+            1. sensorId
+            2. Message periodicity 
     1. Invoke the actual SmartSensorAPI
         * Would use module twin to pass configuration to the module at runtime
 * Generalise the module into a class library using IoC/DI to create a Simulator Module plugin framework

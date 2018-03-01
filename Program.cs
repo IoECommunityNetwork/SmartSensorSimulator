@@ -96,29 +96,30 @@ namespace SmartSensorSimulator
             Console.WriteLine("IoT Hub module client initialized.");
 
             // Read sample sensor data for device 38 from file
-            SensorData data = GetSensorData(38);
+            SensorData data = GetSensorData(38); // TODO can we refactor sensor or device ID somehow? module twin or plain configuration file
 
             // Source observables for sample device data
             var source = Observable
-                            .Interval(TimeSpan.FromSeconds(1))
+                            .Interval(TimeSpan.FromSeconds(5)) // TODO refactor timespan into module twin configuration
                             .Select(i => data.message.lists[i % data.message.lists.Length]);
 
-            // Use observables to trigger a periodic 
+            // React to stream of SensorData readings from the API or file
             return
                 source
                     .Select(x => 
                             new BinSensorReading
                             {
-                                sesnorID = 98,
+                                sesnorID = 98, // TODO refactor constant sendorDetail to fetch from actual sample values
                                 binID = 667,
                                 binName = "Random Smart Sensor Simulator Module",
                                 binCategory = "Smart Sensor Simulator ",
                                 latitude = -33.869033,
                                 longitude = 151.208895,
-                                fillLevel = CalculateFillLevel(data.message.depthWhenEmpty_cm,  data.message.distanceSensorToFillLine_cm, x.ultrasound),
+                                fillLevel = CalculateFillLevel(data.message.depthWhenEmpty_cm,  data.message.distanceSensorToFillLine_cm, x.ultrasound), // TODO fillLevel can sometimes com out as -ve due to ultrsound reading, maybe filter?
                                 temperature = x.temperatureValue,
                                 timestampdata = x.timestampdata
                             })
+                    .Do(x => Console.WriteLine(String.Format("FillLevel={0}", x.fillLevel))) // DEBUG
                     .Select(JsonConvert.SerializeObject)
                     .Select(messageString => Encoding.UTF8.GetBytes(messageString))
                     .Select(messageBytes => new Message(messageBytes))
@@ -142,6 +143,7 @@ namespace SmartSensorSimulator
             {
                 return JsonConvert.DeserializeObject<SensorData>(reader.ReadToEnd());
             }
+            
         }
 
         private static int CalculateFillLevel(int depthWhenEmpty, int distanceToFillLine, int ultrasound)
