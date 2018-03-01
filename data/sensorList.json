@@ -1,0 +1,92 @@
+{
+    "status": "success",
+    "message": {
+        "current_parameter": "?offset=0",
+        "next_parameter": "",
+        "previous_parameter": "",
+        "start": 0,
+        "total": 5,
+        "lists": [
+            {
+                "sensorsID": 38,
+                "sensorstokenID": 1,
+                "sensorCompany": "LX Group",
+                "sensorDeviceID": "IoTAA Clone 1",
+                "firmwareVersion": "",
+                "sensorName": "IoTAA Clone 1",
+                "isAllocated": "Y",
+                "description": "",
+                "companyID": 7,
+                "createdDate": 1500606449,
+                "updatedDate": 1500606449,
+                "createdByUserID": 5,
+                "updatedByUserID": 5,
+                "latest_sensorsdata": null
+            },
+            {
+                "sensorsID": 39,
+                "sensorstokenID": 1,
+                "sensorCompany": "LX Group",
+                "sensorDeviceID": "IoTAA Clone 2",
+                "firmwareVersion": "",
+                "sensorName": "IoTAA Clone 2",
+                "isAllocated": "Y",
+                "description": "",
+                "companyID": 7,
+                "createdDate": 1500606466,
+                "updatedDate": 1500606466,
+                "createdByUserID": 5,
+                "updatedByUserID": 5,
+                "latest_sensorsdata": null
+            },
+            {
+                "sensorsID": 40,
+                "sensorstokenID": 1,
+                "sensorCompany": "LX Group",
+                "sensorDeviceID": "IoTAA Clone 3",
+                "firmwareVersion": "",
+                "sensorName": "IoTAA Clone 3",
+                "isAllocated": "N",
+                "description": "",
+                "companyID": 7,
+                "createdDate": 1500606485,
+                "updatedDate": 1500606509,
+                "createdByUserID": 5,
+                "updatedByUserID": 5,
+                "latest_sensorsdata": null
+            },
+            {
+                "sensorsID": 41,
+                "sensorstokenID": 1,
+                "sensorCompany": "LX Group",
+                "sensorDeviceID": "IoTAA Clone 4",
+                "firmwareVersion": "",
+                "sensorName": "IoTAA Clone 4",
+                "isAllocated": "N",
+                "description": "",
+                "companyID": 7,
+                "createdDate": 1500606503,
+                "updatedDate": 1500606514,
+                "createdByUserID": 5,
+                "updatedByUserID": 5,
+                "latest_sensorsdata": null
+            },
+            {
+                "sensorsID": 42,
+                "sensorstokenID": 1,
+                "sensorCompany": "LX Group",
+                "sensorDeviceID": "IoTAA Clone 5",
+                "firmwareVersion": "",
+                "sensorName": "IoTAA Clone 5",
+                "isAllocated": "N",
+                "description": "",
+                "companyID": 7,
+                "createdDate": 1500606530,
+                "updatedDate": 1500606530,
+                "createdByUserID": 5,
+                "updatedByUserID": 5,
+                "latest_sensorsdata": null
+            }
+        ]
+    }
+}

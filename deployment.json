@@ -35,7 +35,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "siregistry.azurecr.io/sssim4win:1",
+              "image": "siregistry.azurecr.io/sssim4win:3",
               "createOptions": "{}"
             }
           }

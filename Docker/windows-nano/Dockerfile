@@ -4,6 +4,8 @@ ARG EXE_DIR=.
 
 WORKDIR /app
 
+COPY data ./data
+
 COPY $EXE_DIR/ ./
 
 CMD ["dotnet", "SmartSensorSimulator.dll"]

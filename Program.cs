@@ -95,23 +95,30 @@ namespace SmartSensorSimulator
             await ioTHubModuleClient.OpenAsync();
             Console.WriteLine("IoT Hub module client initialized.");
 
+            // Read sample sensor data for device 38 from file
+            SensorData data = GetSensorData(38);
+
+            // Source observables for sample device data
+            var source = Observable
+                            .Interval(TimeSpan.FromSeconds(1))
+                            .Select(i => data.message.lists[i % data.message.lists.Length]);
+
             // Use observables to trigger a periodic 
             return
-                Observable.Interval(new TimeSpan(0, 0, 5))
-                    .Select(i =>
-                                new BinSensorReading
-                                {
-                                    sesnorID = 99,
-                                    binID = 666,
-                                    binName = "Random Smart Sensor Simulator Module",
-                                    binCategory = "Smart Sensor Simulator ",
-                                    latitude = -33.869033,
-                                    longitude = 151.208895,
-                                    fillLevel = rand.Next(0,101),
-                                    temperature = rand.Next(0,101),
-                                    timestampdata = Convert.ToInt32(DateTimeOffset.Now.ToUnixTimeSeconds())
-                                }
-                    )
+                source
+                    .Select(x => 
+                            new BinSensorReading
+                            {
+                                sesnorID = 98,
+                                binID = 667,
+                                binName = "Random Smart Sensor Simulator Module",
+                                binCategory = "Smart Sensor Simulator ",
+                                latitude = -33.869033,
+                                longitude = 151.208895,
+                                fillLevel = CalculateFillLevel(data.message.depthWhenEmpty_cm,  data.message.distanceSensorToFillLine_cm, x.ultrasound),
+                                temperature = x.temperatureValue,
+                                timestampdata = x.timestampdata
+                            })
                     .Select(JsonConvert.SerializeObject)
                     .Select(messageString => Encoding.UTF8.GetBytes(messageString))
                     .Select(messageBytes => new Message(messageBytes))
@@ -127,6 +134,26 @@ namespace SmartSensorSimulator
                                 Console.WriteLine(ex.ToString());
                                 Console.WriteLine();
                             });
+        }
+
+        private static SensorData GetSensorData(int sensorId)
+        {
+            using (StreamReader reader = new StreamReader(String.Format("data/sensorData.{0}.json", sensorId)))
+            {
+                return JsonConvert.DeserializeObject<SensorData>(reader.ReadToEnd());
+            }
+        }
+
+        private static int CalculateFillLevel(int depthWhenEmpty, int distanceToFillLine, int ultrasound)
+        {
+            return Convert.ToInt32(
+                Math.Round(
+                    Convert.ToDecimal(depthWhenEmpty + distanceToFillLine - ultrasound)
+                    /
+                    Convert.ToDecimal(depthWhenEmpty) 
+                    * 
+                    100)
+                );
         }
     }
 }
