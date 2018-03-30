@@ -121,7 +121,7 @@ namespace SmartSensorSimulator
                                     binCategory = _.detail.currentPinAllocated.pinType.pinTypeName, // "Smart Sensor Simulator ",
                                     latitude = _.detail.currentPinAllocated.latitude, // -33.869033,
                                     longitude = _.detail.currentPinAllocated.longitude, //151.208895,
-                                    fillLevel = CalculateFillLevel(_.detail.currentPinAllocated.pinType.depthWhenEmpty_cm,  _.detail.currentPinAllocated.pinType.distanceSensorToFillLine_cm, _.data.ultrasound),
+                                    fillLevel = CalculateFillLevel(_.detail.currentPinAllocated.pinType.depthWhenEmpty_cm,  _.detail.currentPinAllocated.pinType.distanceSensorToFillLine_cm, _.data.ultrasound), // TODO fillLevel can sometimes com out as -ve due to ultrsound reading, maybe filter?
                                     temperature = _.data.temperatureValue,
                                     timestampdata = _.data.timestampdata
                                 })
