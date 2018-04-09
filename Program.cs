@@ -16,6 +16,8 @@ namespace SmartSensorSimulator
     using System.Reactive;
     using System.Reactive.Linq;
     using System.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
 
     class Program
     {
@@ -98,10 +100,17 @@ namespace SmartSensorSimulator
             // Read sample sensor data for device 38 from file
             SensorData data = GetSensorData(38); // TODO can we refactor sensor or device ID somehow? module twin or plain configuration file
 
+            int interval = 86400; // TODO
+
             // Source observables for sample device data
             var source = Observable
-                            .Interval(TimeSpan.FromSeconds(5)) // TODO refactor timespan into module twin configuration
-                            .Select(i => data.message.lists[i % data.message.lists.Length]);
+                            .Interval(TimeSpan.FromSeconds(1)) // TODO refactor timespan into module twin configuration
+                            // .Select(i => data.message.lists[i % data.message.lists.Length]);
+                            .SelectMany(async idx => 
+                            {
+                                return await FetchSensorDataAsync(38, DateTimeOffset.FromUnixTimeSeconds(1515890278 + idx * interval), new TimeSpan(0, 0, interval));
+                            })
+                            .SelectMany(_ => _); // flatten from List<SensorDataEntry> to SensorDataEntry;
 
             // React to stream of SensorData readings from the API or file
             return
@@ -158,6 +167,40 @@ namespace SmartSensorSimulator
                 return JsonConvert.DeserializeObject<SensorData>(reader.ReadToEnd());
             }
             
+        }
+
+        private static async Task<List<SensorDataEntry>> FetchSensorDataAsync(int sensorId, DateTimeOffset from, TimeSpan duration)
+        {
+            long fromUnixTime = from.ToUnixTimeSeconds();
+            long toUnixTime = fromUnixTime + Convert.ToInt64(duration.TotalSeconds);
+
+            string baseUrl = "https://dashboard.smartsensor.com.au/";
+            string rawSensorDataUrl = $"api/sensors/rawsensordata/{sensorId}?dmin={fromUnixTime}&dmax={toUnixTime}";
+
+            using (var client = new HttpClient())
+            {
+                string url = baseUrl + rawSensorDataUrl;
+                var body = new
+                {
+                    deviceID = "ABCD-EFGH-IJKL-MNOP",
+                    token = "c3eeaab10e3c93f6c9da95027c14a283"
+                };
+                HttpResponseMessage response = await client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"));
+                // response.EnsureSuccessStatusCode();
+                if (response.IsSuccessStatusCode)
+                {
+                    string result = await response.Content.ReadAsStringAsync();
+                    var rootJson = JsonConvert.DeserializeObject<SensorData>(result);
+                    var arr = rootJson.message.lists;
+                    var lst = arr.OfType<SensorDataEntry>().ToList();
+                    // Console.WriteLine($"API call returned {lst.Count} entries");
+                    return lst;
+                }
+                else
+                {
+                    return new List<SensorDataEntry>();
+                }
+            }
         }
 
         private static int CalculateFillLevel(int depthWhenEmpty, int distanceToFillLine, int ultrasound)
